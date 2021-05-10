@@ -16,6 +16,9 @@ The script was tested in python 3.8.6 on windows 10, and Ubuntu 20.04  using pyt
 git clone https://github.com/LocalsGitHub/Discord-Token-Checker.git
 cd Discord-Token-Checker
 pip install -r requirements.txt
+Linux:
+python3 checker.py
+Windows:
 py checker.py
 ```
 
