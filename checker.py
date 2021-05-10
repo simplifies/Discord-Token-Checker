@@ -9,6 +9,9 @@ from discord_webhook import DiscordWebhook
 
 from core.localscommands import clear, pause, title
 
+#  set to true if needed
+debug = False
+
 def start():
 	pass
 
@@ -75,9 +78,15 @@ def main():
 				f.close()
 				try:
 					a.close()
-				except Exception:
+				except Exception as e:
+					if debug == True:
+						print(e)
+						pass
 					pass
-		except FileNotFoundError:
+		except FileNotFoundError as e:
+			if debug == True:
+				print(e)
+				pass
 			print("Please create a file named 'tokens.txt', and enter your tokens in there.")
 			pause()
 			exit()
@@ -95,7 +104,9 @@ def checkToken():
 	try:
 		discordAPI = requests.get("https://discord.com/api/v6/auth/login", headers={"Authorization": token}, proxies={"http": randProxy,"https": randProxySSL})
 	except Exception as e:
-		#print(e)
+		if debug == True:
+			print(e)
+			pass
 		return;
 	if discordAPI.status_code == 200:
 		taken += 1
