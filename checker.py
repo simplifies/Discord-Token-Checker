@@ -84,8 +84,8 @@ def main():
 				
 
 def checkToken():
-	global taken
-	global available
+	global invalid
+	global valid
 	global total
 	global randProxy
 	global randProxySSL
