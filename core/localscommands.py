@@ -12,6 +12,10 @@
 
 from os import name, system, sys
 
+if name == 'nt':
+	import ctypes
+	pass
+	
 # Clears Screen ('cls' on windows)
 def clear():
     if name == 'nt':
@@ -21,8 +25,11 @@ def clear():
 
 # Pauses ('pause' on windows)
 def pause():
-	print("Press the <enter> key to continue!")
-	input()
+	if name == 'nt':
+		system("pause >nul 2>&1")
+	elif name == "posix":
+		print("Press the <enter> key to continue!")
+		input()
 
 # Sets window title
 def title(text):
