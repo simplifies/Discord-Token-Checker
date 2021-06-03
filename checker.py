@@ -1,7 +1,6 @@
 import os
 import requests
 import ctypes
-import threading
 import time
 from colorama import Fore, init
 import random
@@ -72,9 +71,7 @@ def main():
 			global line
 			lines = f.read().splitlines()
 			for line in lines:
-				thread = threading.Thread(target=checkToken, daemon=True)
-				thread.start()
-				time.sleep(0.1)
+				checkToken() # using threading creates a bug where it only checks half of the tokens
 			pause()
 			f.close()
 			try:
